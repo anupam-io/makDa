@@ -160,9 +160,20 @@ void Crawler::showResults()
 	string dashline = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 
 	cout << dashline << endl;
+	cout << "DOWNLOADER ANALYTICS:" << endl;
 	for(auto i: download_stat.value()){
 		cout << i.first << ": " << i.second << endl;
 	}
+	cout << dashline << endl;
+	cout << "CHILD THREAD ANALYTICS:" << endl;
+	long long sum_d = 0, sum_p = 0, sum_u = 0;
+	for(auto i: threadTimings){
+		sum_d+=i[0]; sum_p+=i[1]; sum_u+=i[2];
+	}
+	cout << "Mean download time: " << sum_d/download_stat.value().size() << " ms." << endl;
+	cout << "Mean parse time: " << sum_p/download_stat.value().size() << " ms." << endl;
+	cout << "Mean shared_var updation time: " << sum_u/download_stat.value().size() << " ms." << endl;
+
 	cout << dashline << endl;
 
 }
@@ -170,29 +181,30 @@ void Crawler::showResults()
 void childThread(string url, int th_no)
 {
 	
-	high_resolution_clock::time_point t1, t2;
+	clock_t t1, t2;
 	double totaldTime = 0;
 	double d_Time, p_Time, u_Time;
 
 	
 
 	// downloading the file
-	t1 = _now;
+	t1 = clock();
 	string html = myCrawler.downloader(url); // downloading html
-	t2 = _now;
-	d_Time = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+	t2 = clock();
+	d_Time = double(t2-t1)*1000 / CLOCKS_PER_SEC;
 
 	cout << CYAN << "Thread " << th_no << " has downloaded files." << C_END << endl;
 
 	// for calculating time of downloading
-	t1 = _now;
+	
+	t1 = clock();
 	set<string> linkedSites = getLinks(html, myCrawler.maxLinks); // parsing html
-	t2 = _now;
-	p_Time = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+	t2 = clock();
+	p_Time = double(t2-t1)*1000 / CLOCKS_PER_SEC;
 	cout << CYAN << "Thread " << th_no << " has extracted links." << C_END << endl;
 
 	// updating the shared variables
-	t1 = _now;
+	t1 = clock();
 	string currDomain = getDomain(url);
 	for (auto i : linkedSites)
 	{
@@ -203,8 +215,8 @@ void childThread(string url, int th_no)
 			myCrawler.pageRank.add(currDomain, getDomain(i));
 		}
 	}
-	t2 = _now;
-	u_Time = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+	t2 = clock();
+	u_Time = double(t2-t1)*1000 / CLOCKS_PER_SEC;
 	cout << CYAN << "Thread " << th_no << " has updated shared var." << C_END << endl;
 
 	// saving time measurements for this thread

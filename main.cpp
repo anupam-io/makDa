@@ -14,18 +14,18 @@ int main(int argc, const char *argv[])
   myCrawler.maxLinks = stoi(argv[1]);
   myCrawler.pagesLimit = stoi(argv[2]);
   myCrawler.maxThreads = stoi(argv[3]);
-
+	clock_t t1, t2;
   
-	auto t1 = chrono::steady_clock::now();
+	t1 = clock();
   myCrawler.initialize();
   myCrawler.runCrawler();
 //   myCrawler.ranker();
   myCrawler.showResults();
   myCrawler.terminate();
-	auto t2 = chrono::steady_clock::now();
+	t2 = clock();
 
 
-	int res = duration_cast<milliseconds>(t2 - t1).count();
+	double res = double(t2-t1)*1000 / CLOCKS_PER_SEC;
 
 	cout << "FINISHED." << endl;
 	cout<< RED << "Elapsed time in milliseconds : "

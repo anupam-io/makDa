@@ -7,7 +7,6 @@
 #include <queue>
 #include <map>
 #include <set>
-#include <chrono>
 #include <thread>
 #include <condition_variable>
 
@@ -19,10 +18,7 @@
 #include "thread_safe/map_ts.cpp"
 #include "thread_safe/queue_ts.cpp"
 
-#define _now high_resolution_clock::now()
-
 using namespace std;
-using namespace std::chrono;
 
 #define RED "\033[31m"	 /* Red */
 #define CYAN "\033[36m"	 /* Cyan */
@@ -36,14 +32,11 @@ class Crawler
 public:
 	ofstream log; // logging
 
+	int_ts workingThreads; 		// total no of threads working
+	int_ts pagesLimitReached;	// for storing total processed pages till now
+	int_ts totalVisitedPages;	// hashing utility for visited pages
 
-
-	int_ts workingThreads; // total no of threads working
-	int_ts pagesLimitReached;
-	// for storing total processed pages till now
-	int_ts totalVisitedPages;
-
-	mutex timingLock;
+	mutex timingLock;			
 	vector<vector<double>> threadTimings;
 	map_ts<string, int> download_stat;
 
