@@ -19,7 +19,8 @@ int main(int argc, const char *argv[])
 	auto t1 = chrono::steady_clock::now();
   myCrawler.initialize();
   myCrawler.runCrawler();
-//   myCrawler.showResults();
+//   myCrawler.ranker();
+  myCrawler.showResults();
   myCrawler.terminate();
 	auto t2 = chrono::steady_clock::now();
 

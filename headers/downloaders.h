@@ -15,7 +15,7 @@ void c_finish(){
 	curl_global_cleanup();
 }
 
-string html_downloader(string url){
+pair<bool, string> html_downloader(string url){
 	CURL *curl;
 	CURLcode res;
 	string out_file = "temp/" + to_string(rand());
@@ -26,32 +26,32 @@ string html_downloader(string url){
 		FILE *f = fopen(out_file.c_str(), "w");
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, f);
-		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE, 1024*1024);
+		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE, 1024*1024); // 1MB
 		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 4); // timeout for the URL to download
 
 
 
 #ifdef SKIP_PEER_VERIFICATION
-		/*
-     * If you want to connect to a site who isn't using a certificate that is
-     * signed by one of the certs in the CA bundle you have, you can skip the
-     * verification of the server's certificates. This makes the connection
-     * A LOT LESS SECURE.
-     *
-     * If you have a CA cert for the server stored someplace else than in the
-     * default bundle, then the CURLOPT_CAPATH option might come handy for
-     * you.
-     */
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+	/*
+	* If you want to connect to a site who isn't using a certificate that is
+	* signed by one of the certs in the CA bundle you have, you can skip the
+	* verification of the server's certificates. This makes the connection
+	* A LOT LESS SECURE.
+	*
+	* If you have a CA cert for the server stored someplace else than in the
+	* default bundle, then the CURLOPT_CAPATH option might come handy for
+	* you.
+	*/
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 #endif
 #ifdef SKIP_HOSTNAME_VERIFICATION
-		/*
-     * If the site you're connecting to uses a different host name that what
-     * they have mentioned in their server certificate's commonName (or
-     * subjectAltName) fields, libcurl will refuse to connect. You can skip
-     * this check, but this will make the connection less secure.
-     */
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+	/*
+	* If the site you're connecting to uses a different host name that what
+	* they have mentioned in their server certificate's commonName (or
+	* subjectAltName) fields, libcurl will refuse to connect. You can skip
+	* this check, but this will make the connection less secure.
+	*/
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 #endif
 
 		/* Perform the request, res will get the return code */
@@ -63,7 +63,7 @@ string html_downloader(string url){
 			cout << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
 			
 			system(string("rm -rf "+ out_file).c_str());	
-			return "FAIL";
+			return make_pair(false, curl_easy_strerror(res));
 		}
 
 		/* always cleanup */
@@ -81,14 +81,11 @@ string html_downloader(string url){
 		fin.close();
 		system(string("rm -rf "+ out_file).c_str());	
 
-		return ret;
+		return make_pair(true, ret);
 	} else {
 		cout << "curl_easy_init() failed." << endl;
-		return "FAIL";
-	}
-
-
-	return NULL;
+		return make_pair(false, "curl_easy_init() failed.");
+	}	
 }
 
 

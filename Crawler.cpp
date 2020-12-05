@@ -51,9 +51,16 @@ void Crawler::terminate(){
 
 string Crawler::downloader(string url)
 {
-	string html = html_downloader(url);
+	auto res = html_downloader(url);
+	if(res.first == true){
+		download_stat.inc("SUCCESS");
+		return res.second;
+	} else{
+		download_stat.inc(res.second);
+		return "";
+	}
 
-	return html;
+	return "";
 }
 
 void Crawler::gotosleep()
@@ -150,7 +157,14 @@ void Crawler::runCrawler()
 */
 void Crawler::showResults()
 {
-  
+	string dashline = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+
+	cout << dashline << endl;
+	for(auto i: download_stat.value()){
+		cout << i.first << ": " << i.second << endl;
+	}
+	cout << dashline << endl;
+
 }
 
 void childThread(string url, int th_no)
@@ -187,7 +201,6 @@ void childThread(string url, int th_no)
 			myCrawler.discoveredSites.inc(i);
 			myCrawler.linkQueue.push(i);
 			myCrawler.pageRank.add(currDomain, getDomain(i));
-			//pageRank[url] = i;
 		}
 	}
 	t2 = _now;
@@ -205,7 +218,6 @@ void childThread(string url, int th_no)
 //
 	unique_lock<mutex> lk(myCrawler.cv_m); // unique_lock for conditional variable
 	myCrawler.workingThreads.add(-1);
-	//cout << RED << d_Time << " " << p_Time << " " << u_Time << endl << C_END;
 	cout << BLUE << "Thread " << th_no << " finished, total: " << myCrawler.workingThreads.value() << C_END << endl;
 
     // waking up the parent thread

@@ -8,15 +8,18 @@ all: ${all_targets}
 
 compile:
 	@echo "Compiling file..."
-	g++ -std=c++14 main.cpp -o _crawler -lcurl -lpthread -w
+	g++ -std=c++14 main.cpp -o _crawler -lcurl -lpthread
+	@echo "Successfully compiled."
+
 
 run:
 	mkdir temp -p
 	@echo "Running..."
 	./_crawler $(maxlinks) $(pagelimit) $(threads)
+	@echo "Successfully runned."
 
 clean:
-	rm -rf _crawler
-	rm -rf temp
-	rm -rf logs.txt
+	@rm -rf _crawler
+	@rm -rf temp
+	@rm -rf logs.txt
 	@echo "All cleaned."

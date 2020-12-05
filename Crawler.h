@@ -11,10 +11,6 @@
 #include <thread>
 #include <condition_variable>
 
-#include <pthread.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include "headers/downloaders.h"
 #include "headers/getLinks.h"
 #include "headers/getDomain.h"
@@ -40,6 +36,8 @@ class Crawler
 public:
 	ofstream log; // logging
 
+
+
 	int_ts workingThreads; // total no of threads working
 	int_ts pagesLimitReached;
 	// for storing total processed pages till now
@@ -47,6 +45,7 @@ public:
 
 	mutex timingLock;
 	vector<vector<double>> threadTimings;
+	map_ts<string, int> download_stat;
 
 	// lock and cond_var for parent
 	bool ready = false;

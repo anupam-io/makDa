@@ -3,9 +3,6 @@
 #include <mutex>
 using namespace std;
 
-// pair<string, set<string>> a;
-// a["web"].push_back("web1");
-
 template <class Key, class Value>
 class map_ts
 {
