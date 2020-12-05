@@ -2,12 +2,15 @@
 #define ___CRAWLER_CPP
 
 #include "Crawler.h"
-#define _del_stop_at 5
 
 void Crawler::initialize()
 {
+
 	log.open("logs.txt");
 	log << "Crawler initialized" << endl;
+
+	srand(time(0));
+	c_init();
 
 	// initialize value of soem variables
 
@@ -41,23 +44,14 @@ void Crawler::initialize()
 }
 
 void Crawler::terminate(){
+	c_finish();
 	log.close();
 
 }
 
 string Crawler::downloader(string url)
 {
-	// check if the downloaded website is http,
-	// then use appropriate HTML downloader
-	string html;
-	if (url.substr(0, 5) == "https")
-	{
-		html = httpsDownloader(url);
-	}
-	else
-	{
-		html = httpDownloader(url);
-	}
+	string html = html_downloader(url);
 
 	return html;
 }
@@ -100,8 +94,8 @@ void Crawler::createThread()
 	}
 
     // create thread
-	thread *th = new thread(childThread, currentSite, totalVisitedPages.value());
-	(*th).detach();
+	thread th = thread(childThread, currentSite, totalVisitedPages.value());
+	th.detach();
 }
 
 void Crawler::runCrawler()
@@ -110,7 +104,7 @@ void Crawler::runCrawler()
 	{
 		if (pagesLimitReached.value())
 		{
-			if(workingThreads.value() < _del_stop_at)
+			if(workingThreads.value() < 1)
 			{
 				// exiting
 
@@ -156,41 +150,7 @@ void Crawler::runCrawler()
 */
 void Crawler::showResults()
 {
-  ofstream tout("OUTPUT/th_timings.csv");
-		for (auto i : threadTimings)
-		{
-			tout << i[0] << ',' << i[1] << ',' << i[2] << endl;
-		}
-		tout.close();
-
-		ofstream fout("OUTPUT/pagerank.csv");
-		for (auto i: pageRank.value())
-		{
-			fout << i.first;
-			for (auto link: i.second)
-			{
-				fout << "," << link;
-			}
-			fout << endl;
-		}
-		fout.close();
-	// system("clear");
-	string dashline = "-----------------------------------------------------";
-	cout << endl;
-	cout << "Parameters:" << endl;
-	cout << dashline << endl;
-	cout << "Max Links from a website:"
-			 << "\t" << maxLinks << endl;
-	cout << "Max pages downloaded:"
-			 << "\t" << pagesLimit << endl;
-	cout << "Max threads working:"
-			 << "\t" << maxThreads << endl;
-	cout << "Total visited pages:"
-			 << "\t" << totalVisitedPages.value() << endl;
-
-	cout << dashline << endl;
-	/*
-	*/
+  
 }
 
 void childThread(string url, int th_no)
@@ -250,7 +210,7 @@ void childThread(string url, int th_no)
     // waking up the parent thread to create more threads or exit the crawler if crawling is completed
 	if (myCrawler.pagesLimitReached.value())
 	{
-		if (myCrawler.workingThreads.value() < _del_stop_at)
+		if (myCrawler.workingThreads.value() < 1)
 		{
 			myCrawler.awake();
 		}

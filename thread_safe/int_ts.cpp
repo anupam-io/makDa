@@ -1,33 +1,28 @@
 #include <iostream>
 #include <mutex>
-#include <pthread.h>
 using namespace std;
 
 class int_ts{
 	int num = 0;
-	pthread_rwlock_t lk;
+	mutex m_lock;
 
 public:
 	int_ts(){
-		pthread_rwlock_init(&lk, NULL);
 	}
 
 	void assign(int a){
-		pthread_rwlock_wrlock(&lk);
+		lock_guard<mutex> guard_obj(m_lock);
 		num = a;
-		pthread_rwlock_unlock(&lk);
 	}
 	int value(){
-		pthread_rwlock_rdlock(&lk);
+		lock_guard<mutex> guard_obj(m_lock);
 		int ret = num;
-		pthread_rwlock_unlock(&lk);
 		return ret;
 	}
 	int add(int x){
-		pthread_rwlock_wrlock(&lk);
+		lock_guard<mutex> guard_obj(m_lock);
 		num+=x;
 		int ret = num;
-		pthread_rwlock_unlock(&lk);
 		return ret;
 	}
 };
