@@ -1,6 +1,6 @@
 maxlinks:= 100
 pagelimit:= 100
-threads:= 50
+threads:= 100
 rankerFlag:= -sp
 all_targets:= compile run clean
 

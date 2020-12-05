@@ -30,7 +30,8 @@ public:
 		lock_guard<mutex> guard_obj(m_lock);
 		return m;
 	}
-	// Special call, only for map with Value as set
+
+	// Special call, only for map with Value == set<string>
 	void add(const Key k, string str)
 	{
 		lock_guard<mutex> guard_obj(m_lock);

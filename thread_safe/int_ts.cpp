@@ -10,10 +10,6 @@ public:
 	int_ts(){
 	}
 
-	void assign(int a){
-		lock_guard<mutex> guard_obj(m_lock);
-		num = a;
-	}
 	int value(){
 		lock_guard<mutex> guard_obj(m_lock);
 		int ret = num;

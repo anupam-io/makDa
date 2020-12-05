@@ -27,6 +27,8 @@ string html_downloader(string url){
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, f);
 		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE, 1024*1024);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 4); // timeout for the URL to download
+
 
 
 #ifdef SKIP_PEER_VERIFICATION

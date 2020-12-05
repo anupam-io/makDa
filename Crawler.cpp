@@ -61,7 +61,7 @@ void Crawler::gotosleep()
 	unique_lock<mutex> lk(cv_m); // unique_lock for conditional variable
 	cout << "Going to sleep now" << endl;
 
-	ready = false;							 // because main thread is now not ready to process any data
+	ready = false;				 // because main thread is now not ready to process any data
 
 	// written in a while loop, if spuriously woken up
 	while (!ready)
@@ -72,8 +72,8 @@ void Crawler::gotosleep()
 
 void Crawler::awake()
 {
-	ready = true;								 // because now main thread needs to be awaken
-	cv.notify_one();						 // notifying the main thread which is sleeping
+	ready = true;		// because now main thread needs to be awaken
+	cv.notify_one();	// notifying the main thread which is sleeping
 }
 
 void Crawler::createThread()
@@ -81,7 +81,7 @@ void Crawler::createThread()
 	string currentSite = linkQueue.pop();
 	totalVisitedPages.add(1);
 	workingThreads.add(1);
-
+	discoveredSites.inc(currentSite);
 
 	log << currentSite << endl;
 	cout << GREEN << "Creating a thread, total: " << workingThreads.value() << C_END << endl;
@@ -200,6 +200,7 @@ void childThread(string url, int th_no)
 	myCrawler.timingLock.unlock();
 
 
+	
 
 //
 	unique_lock<mutex> lk(myCrawler.cv_m); // unique_lock for conditional variable
@@ -207,7 +208,7 @@ void childThread(string url, int th_no)
 	//cout << RED << d_Time << " " << p_Time << " " << u_Time << endl << C_END;
 	cout << BLUE << "Thread " << th_no << " finished, total: " << myCrawler.workingThreads.value() << C_END << endl;
 
-    // waking up the parent thread to create more threads or exit the crawler if crawling is completed
+    // waking up the parent thread
 	if (myCrawler.pagesLimitReached.value())
 	{
 		if (myCrawler.workingThreads.value() < 1)
