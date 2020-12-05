@@ -20,6 +20,7 @@ int main(int argc, const char *argv[])
   myCrawler.initialize();
   myCrawler.runCrawler();
   myCrawler.showResults();
+  myCrawler.terminate();
 	auto t2 = chrono::steady_clock::now();
 
 

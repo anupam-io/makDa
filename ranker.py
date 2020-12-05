@@ -97,11 +97,11 @@ def counter_ranker(corpus):
     
     for x in keys:
         for link in corpus[x]:
-            counter[x] = 0
+            counter[link] = 0
 
     for x in keys:
         for link in corpus[x]:
-            counter[x] +=1
+            counter[link] +=1
     
     return counter
 

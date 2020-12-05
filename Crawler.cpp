@@ -9,6 +9,9 @@ void Crawler::initialize()
 	log.open("logs.txt");
 	log << "Crawler initialized" << endl;
 
+	// initialize value of soem variables
+
+
 	// Add initial urls from initialLinks.txt
 	ifstream lin("INPUT/initialLinks.txt");
 	if (lin)
@@ -35,6 +38,11 @@ void Crawler::initialize()
 		cout << "Error reading file: \"initialLinks.txt\"" << endl;
 		linkQueue.push("https://www.google.com");
 	}
+}
+
+void Crawler::terminate(){
+	log.close();
+
 }
 
 string Crawler::downloader(string url)

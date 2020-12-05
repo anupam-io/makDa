@@ -70,16 +70,13 @@ public:
 	// Constructor
 	Crawler()
 	{
-		totalVisitedPages.assign(0);
-		workingThreads.assign(0);
-		pagesLimitReached.assign(0);
+		
 	}
 
 	// Destructor
 	~Crawler()
 	{
-		log << "current queue size: " << linkQueue.size() << endl;
-		log.close();
+		
 	}
 
 	// Public Functions
@@ -88,6 +85,11 @@ public:
 		Initialize the Crawler.
 	*/
 	void initialize();
+
+	/*
+		Terminate the Crawler
+	*/
+	void terminate();
 
 	/*
 		Downloads a website and save it in buffer folder
