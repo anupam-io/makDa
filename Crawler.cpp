@@ -8,10 +8,16 @@ void Crawler::initialize()
 	log.open("logs.txt");
 	log << "Crawler initialized" << endl;
 
+	log << "MAX_FILE_SIZE = " << max_file_size << endl;
 	MAX_FILE_SIZE = max_file_size;;
+	log << "TIME_OUT = " <<  time_out << endl;
 	TIME_OUT = time_out;
 
+
+	log << "srand() seed initialized." << endl;
 	srand(time(0));
+
+	log << "Curl global initialized." << endl;
 	c_init();
 
 	// initialize value of soem variables
@@ -39,17 +45,20 @@ void Crawler::initialize()
 				break;
 			}
 		}
+		log << "Links read from file \"INPUT/initialLinks.txt\"  " << endl;
 	}
 	else
 	{
 		// Unable to read starting links from input file
-		cout << "Error reading file: \"initialLinks.txt\"" << endl;
-		linkQueue.push("https://www.google.com");
+		log << "Error reading file: \"initialLinks.txt\"" << endl;
+		linkQueue.push("https://www.google.com/");
 	}
+	log << endl;
 }
 
 void Crawler::terminate()
 {
+	log << "Crawler terminated." << endl;
 	c_finish();
 	log.close();
 }
@@ -157,8 +166,7 @@ void Crawler::runCrawler()
 		// End of crawler loop
 	}
 
-	log << "Crawling completed." << endl
-		<< endl;
+	log << "Crawling completed." << endl << endl;
 }
 
 /*
