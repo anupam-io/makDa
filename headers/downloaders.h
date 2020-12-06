@@ -15,9 +15,14 @@ void c_finish(){
 	curl_global_cleanup();
 }
 
+int MAX_FILE_SIZE = 1024; // in kbs
+int TIME_OUT = 4;
+
 pair<bool, string> html_downloader(string url){
 	CURL *curl;
 	CURLcode res;
+	
+	system("mkdir temp -p");
 	string out_file = "temp/" + to_string(rand());
 
 	curl = curl_easy_init();
@@ -26,10 +31,10 @@ pair<bool, string> html_downloader(string url){
 		FILE *f = fopen(out_file.c_str(), "w");
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, f);
-		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE, 1024*1024); // 1MB
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 4); // timeout for the URL to download
+		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE, 1024*MAX_FILE_SIZE); // 1MB
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, TIME_OUT); // timeout for the URL to download
 
-
+		
 
 #ifdef SKIP_PEER_VERIFICATION
 	/*
@@ -90,31 +95,13 @@ pair<bool, string> html_downloader(string url){
 
 
 
-// int main(void)
-// {
 // 	// Global initialization of curl
 // 	c_init();
 
 // 	string url = "https://www.wanderlustworker.com/";
 // 	string out_file = "target.html";
 
-
-// 	html_download(url, out_file);
-// 	string html;
-
-// 	ifstream fin(out_file); //taking file as inputstream
-// 	ostringstream ss;
-// 	ss << fin.rdbuf(); // reading data
-// 	html = ss.str();
-// 	fin.close();
-
-// 	// cout << html << endl;
-
-	
-
+// 	cout << html_download(url).second << endl;
 
 // 	// After finishing all curl tasks
 // 	c_finish();
-
-// 	return 0;
-// }

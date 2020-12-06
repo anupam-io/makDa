@@ -8,6 +8,7 @@
 #include <map>
 #include <set>
 #include <thread>
+#include <math.h>
 #include <condition_variable>
 
 #include "headers/downloaders.h"
@@ -24,7 +25,7 @@ using namespace std;
 #define CYAN "\033[36m"	 /* Cyan */
 #define GREEN "\033[32m" /* Green */
 #define BLUE "\033[34m"	 /* Blue */
-#define C_END "\033[0m"
+#define RESET "\033[0m"
 
 class Crawler
 {
@@ -33,8 +34,10 @@ public:
 	ofstream log; // logging
 
 	int_ts workingThreads; 		// total no of threads working
-	int_ts pagesLimitReached;	// for storing total processed pages till now
+	int_ts maxPagesReached;	// for storing total processed pages till now
 	int_ts totalVisitedPages;	// hashing utility for visited pages
+	int max_file_size = 1024;
+	int time_out = 5;
 
 	mutex timingLock;			
 	vector<vector<double>> threadTimings;
@@ -46,9 +49,9 @@ public:
 	mutex cv_m;
 
 	// Parameters
-	int maxLinks = 1000;
-	int pagesLimit = 100;
-	int maxThreads = 10;
+	int maxLinks = 10;
+	int maxPages = 10;
+	int maxThreads = 5;
 
 	// MAKE THESE THREAD SAFE
 	// queue for storing linked websites
@@ -56,7 +59,7 @@ public:
 	// map for storing visited websites
 	map_ts<string, bool> discoveredSites;
 	// for storing page relations
-	map_ts<string, set<string>> pageRank;
+	map_ts<string, set<string>> adjList;
 	
 
 	// Constructor

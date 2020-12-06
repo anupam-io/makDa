@@ -1,11 +1,2 @@
-10
-https://www.cricbuzz.com/
-https://www.cricbuzz.com/cricket-match/live-scores
-https://www.cricbuzz.com/live-cricket-scores/30844/nz-vs-wi-1st-test-west-indies-tour-of-new-zealand-2020
-https://www.cricbuzz.com/live-cricket-scores/30540/aus-vs-ind-1st-t20i-india-tour-of-australia-2020-21
-https://www.cricbuzz.com/live-cricket-scores/32097/nza-vs-wia-1st-unofficial-test-west-indies-a-tour-of-new-zealand-2020
-https://www.cricbuzz.com/live-cricket-scores/31933/clk-vs-jst-11th-match-lanka-premier-league-2020
-https://www.cricbuzz.com/live-cricket-scores/31504/rsa-vs-eng-1st-odi-england-tour-of-south-africa-2020
-https://www.cricbuzz.com/cricket-news/115136/corey-anderson-confirms-nz-retirement-signs-on-with-usas-mlc
-https://curl.se/libcurl/c/CURLOPT_MAXFILESIZE.html
-https://www.wikihow.com/Look-Appealing-in-Front-of-Your-Crush
+1
+https://www.iitgn.ac.in/
