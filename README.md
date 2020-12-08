@@ -2,7 +2,7 @@ Forked from [Web-Crawler](https://github.com/ShrutiKatpara/Web-Crawler).
 
 # beQ - A multithreaded web crawler with libcURL & thread-safe data structures
 ## Description
-The goal of this project is to create a multi-threaded web crawler. A Web crawler is an Internet bot that systematically browses the World Wide Web, typically for the purpose of Web indexing. Any search engine uses these indexes, web graphs, and an appropriate algorithm ( such as PageRank ) to rank the pages. The main focus of the project would be to implement a multi-threaded downloader that can download multi websites at the same time. The plan is to implement this in C++.
+The goal of this project is to create a multi-threaded web crawler. A Web crawler is an Internet bot that systematically browses the World Wide Web, typically for the purpose of Web indexing. Any search engine uses these indexes, web graphs, and an appropriate algorithm ( such as PageRank ) to rank the pages. The main focus of the project is to implement a multi-threaded downloader that can download multi websites at the same time. The plan is to implement this in C++.
 
 ## Features/Deliverables
   - Part 1: Download HTTP as well as HTTPS protocol files
@@ -82,19 +82,19 @@ while(1){
   I am also storing the output as a adjacency-list of the graph. So that other ranking mechanisms can be implemented on the top of it later.
 
 ## Libraries used
- - libcURL
-  - for managing HTML downloads
- - Pthread library
+  - [libcurl - the multiprotocol file transfer library](https://curl.se/libcurl/)
+    - for managing HTML downloads
+  - [Pthread library](http://www.cplusplus.com/reference/thread/thread/)
     - For concurrency and synchronization techniques
-       - Locks
-         - Single locks
-         - Reader Writer locks
-       - Condition Variables
- - Matplotlib
+      - [Locks](http://www.cplusplus.com/reference/mutex/mutex/)
+        - Single locks
+        - Reader Writer locks
+      - [Condition Variables](http://www.cplusplus.com/reference/condition_variable/condition_variable/)
+ - [Matplotlib](https://matplotlib.org/)
     - Plotting the graphs
 
 ## How to run multi threaded web crawler
- - use `make` to compile the program
+ - use `make` to compile and run beQ, it would run with its default arguments.
  - supported arguments are:
    - `maxlinks`		  : maximum links extracted from a single website
    - `pagelimit`		 : maximum pages to process
