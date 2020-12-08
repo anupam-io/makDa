@@ -23,8 +23,8 @@ set<string> getLinks(string html, int maxLinks)
 
 	// Storing the href tag links from the html downloaded
 	set<string> res_1 = {
-		sregex_token_iterator(html.begin(), html.end(), url_re, 1),
-		sregex_token_iterator{}};
+			sregex_token_iterator(html.begin(), html.end(), url_re, 1),
+			sregex_token_iterator{}};
 
 	regex exp(".*\\..*"); // regex for URL within <a href> tag
 
@@ -53,18 +53,19 @@ set<string> getLinks(string html, int maxLinks)
 		// A string starting from "https://" is considered as a link
 		// A link should not contain \<>{}
 		if (
-			regex_match(a, exp) &&
-			a.size() > 7 && // so that next one doesn't fails
-			a.substr(0, 8) == "https://" &&
-			a.find('\\') == string::npos &&
-			a.find('<') == string::npos &&
-			a.find('>') == string::npos &&
-			a.find('{') == string::npos &&
-			a.find('}') == string::npos &&
-			a.find(' ') == string::npos)
+				regex_match(a, exp) &&
+				a.size() > 7 && // so that next one doesn't fails
+				a.substr(0, 8) == "https://" &&
+				a.find('\\') == string::npos &&
+				a.find('<') == string::npos &&
+				a.find('>') == string::npos &&
+				a.find('{') == string::npos &&
+				a.find('}') == string::npos &&
+				a.find(' ') == string::npos)
 		{
-			if(a[a.length()-1]!='/'){
-					a.push_back('/');
+			if (a[a.length() - 1] != '/')
+			{
+				a.push_back('/');
 			}
 
 			links.insert(a);

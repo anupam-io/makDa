@@ -33,13 +33,20 @@ class Crawler
 public:
 	ofstream log; // logging
 
-	int_ts workingThreads; 		// total no of threads working
-	int_ts maxPagesReached;	// for storing total processed pages till now
-	int_ts totalVisitedPages;	// hashing utility for visited pages
+	// Parameters
+	int maxLinks = 10;
+	int maxPages = 10;
+	int maxThreads = 5;
 	int max_file_size = 1024;
 	int time_out = 5;
+	bool SAVE_DATA = false;
+	bool RESTORE_DATA = false;
 
-	mutex timingLock;			
+	int_ts workingThreads;		// total no of threads working
+	int_ts maxPagesReached;		// for storing total processed pages till now
+	int_ts totalVisitedPages; // hashing utility for visited pages
+
+	mutex timingLock;
 	vector<vector<double>> threadTimings;
 	map_ts<string, int> download_stat;
 
@@ -48,31 +55,22 @@ public:
 	condition_variable cv;
 	mutex cv_m;
 
-	// Parameters
-	int maxLinks = 10;
-	int maxPages = 10;
-	int maxThreads = 5;
-
-	// MAKE THESE THREAD SAFE
 	// queue for storing linked websites
 	queue_ts linkQueue;
 	// map for storing visited websites
 	map_ts<string, bool> discoveredSites;
 	// for storing page relations
 	map_ts<string, set<string>> adjList;
-	
 
 	// Constructor
-	Crawler()
-	{
-		
-	}
+	// Crawler()
+	// {
+	// }
 
 	// Destructor
-	~Crawler()
-	{
-		
-	}
+	// ~Crawler()
+	// {
+	// }
 
 	// Public Functions
 

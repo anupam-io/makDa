@@ -1,29 +1,39 @@
-maxlinks:= 1000
-pagelimit:= 10
-threads:= 4
-maxfilesize:= 1024
-timeout:= 5
+CC 				:= g++
+CC_FLAGS 	:= -w -Wall -Werror -Wextra -lcurl -lpthread -O3
+CC_V 			:= -std=c++14
+
+BUILD := _beqa
+
+maxlinks		:= 100
+pagelimit		:= 5
+threads			:= 10
+maxfilesize	:= 100
+timeout			:= 5
+restore_data:= 0
+save_data		:= 0
+
 all_targets:= compile run clean
 
 all: ${all_targets}
 
 compile:
 	@echo "Compiling file..."
-	g++ -std=c++14 main.cpp -o _beqa \
-		-w -Wall -Werror -Wextra \
-		-lcurl -lpthread -O3
+	$(CC) main.cpp -o $(BUILD) $(CC_V) $(CC_FLAGS)
 	@echo "Successfully compiled."
 
 
 run:
 	mkdir temp -p
 	@echo "Running..."
-	./_beqa $(maxlinks) $(pagelimit) $(threads) $(maxfilesize) $(timeout)
+	./$(BUILD) \
+		$(maxlinks) $(pagelimit) $(threads) \
+		$(maxfilesize) $(timeout) \
+		$(save_data) $(restore_data)
 	@echo "Successfully runned."
 
 
 clean:
-	@rm -rf _beqa
+	@rm -rf $(BUILD)
 	@rm -rf temp
 	@rm -rf logs.txt
 	@echo "All cleaned."

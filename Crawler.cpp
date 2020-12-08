@@ -9,10 +9,10 @@ void Crawler::initialize()
 	log << "Crawler initialized" << endl;
 
 	log << "MAX_FILE_SIZE = " << max_file_size << endl;
-	MAX_FILE_SIZE = max_file_size;;
-	log << "TIME_OUT = " <<  time_out << endl;
+	MAX_FILE_SIZE = max_file_size;
+	;
+	log << "TIME_OUT = " << time_out << endl;
 	TIME_OUT = time_out;
-
 
 	log << "srand() seed initialized." << endl;
 	srand(time(0));
@@ -22,44 +22,163 @@ void Crawler::initialize()
 
 	// initialize value of soem variables
 
-	// Add initial urls from initialLinks.txt
-	ifstream lin("INPUT/initialLinks.txt");
-	if (lin)
+	if (!RESTORE_DATA)
 	{
-		int n;
-		lin >> n;
-		string a;
-		for (int i = 0; i < n; i++)
+
+		// Add initial urls from initialLinks.txt
+		ifstream lin("INPUT/initialLinks.txt");
+		if (lin)
 		{
-			lin >> a;
-			if (a != "")
+			int n;
+			lin >> n;
+			string a;
+			for (int i = 0; i < n; i++)
 			{
-				if(a[a.length()-1]!='/'){
-					a.push_back('/');
+				lin >> a;
+				if (a != "")
+				{
+					if (a[a.length() - 1] != '/')
+					{
+						a.push_back('/');
+					}
+					linkQueue.push(a);
+					discoveredSites.inc(a);
 				}
-				linkQueue.push(a);
-				discoveredSites.inc(a);
+				else
+				{
+					break;
+				}
 			}
-			else
-			{
-				break;
-			}
+			log << "Links read from file \"INPUT/initialLinks.txt\"  " << endl;
 		}
-		log << "Links read from file \"INPUT/initialLinks.txt\"  " << endl;
+		else
+		{
+			// Unable to read starting links from input file
+			log << "Error reading file: \"initialLinks.txt\"" << endl;
+			linkQueue.push("https://www.google.com/");
+		}
+		log << endl;
 	}
 	else
 	{
-		// Unable to read starting links from input file
-		log << "Error reading file: \"initialLinks.txt\"" << endl;
-		linkQueue.push("https://www.google.com/");
+		system("unzip save_data.zip -d temp");
+
+		ifstream in;
+
+		in.open("temp/adjList.txt");
+		string str;
+		string key = "";
+		while (true)
+		{
+			in >> str;
+			if (str == "--END--")
+			{
+				break;
+			}
+			else if (str == "--end--")
+			{
+				key = "";
+			}
+			else if (key == "")
+			{
+				key = str;
+			}
+			else
+			{
+				adjList.add(key, str);
+			}
+		}
+		in.close();
+		system("rm temp/adjList.txt");
+
+		in.open("temp/discoveredSites.txt");
+		set<string> s;
+		while (true)
+		{
+			in >> str;
+			if (str == "--END--")
+			{
+				break;
+			}
+			else
+			{
+				discoveredSites.inc(str);
+			}
+		}
+		in.close();
+		system("rm temp/discoveredSites.txt");
+
+		in.open("temp/linkQueue.txt");
+		while (true)
+		{
+			in >> str;
+			if (str == "--END--")
+			{
+				break;
+			}
+			else
+			{
+				linkQueue.push(str);
+			}
+		}
+		in.close();
+		system("rm temp/linkQueue.txt");
+
+		system("rm -rf temp/adjList.txt temp/discoveredSites.txt linkQueue.txt");
 	}
-	log << endl;
 }
 
 void Crawler::terminate()
 {
+	cout << "terminating." << endl;
+	cout << adjList.value().size() << endl;
+	cout << discoveredSites.value().size() << endl;
+	cout << linkQueue.size() << endl;
+
 	log << "Crawler terminated." << endl;
 	c_finish();
+
+	// save discoveredSites;
+	// save adjList;
+	// save linksQueue
+	if (SAVE_DATA)
+	{
+
+		ofstream fout;
+		fout.open("discoveredSites.txt");
+		for (auto i : discoveredSites.value())
+		{
+			fout << i.first << endl;
+		}
+		fout << "--END--" << endl;
+		fout.close();
+
+		fout.open("adjList.txt");
+		for (auto i : adjList.value())
+		{
+			fout << i.first << endl;
+			for (auto j : i.second)
+			{
+				fout << j << endl;
+			}
+			fout << "--end--" << endl;
+		}
+		fout << "--END--" << endl;
+		fout.close();
+
+		fout.open("linkQueue.txt");
+		while (linkQueue.size())
+		{
+			fout << linkQueue.pop() << endl;
+		}
+		fout << "--END--" << endl;
+		fout.close();
+
+		system("rm -rf save_data.zip");
+		system("zip -q -r save_data.zip discoveredSites.txt adjList.txt linkQueue.txt");
+		system("rm discoveredSites.txt adjList.txt linkQueue.txt");
+	}
+
 	log.close();
 }
 
@@ -96,7 +215,7 @@ void Crawler::gotosleep()
 
 void Crawler::awake()
 {
-	ready = true;	 // because now main thread needs to be awaken
+	ready = true;		 // because now main thread needs to be awaken
 	cv.notify_one(); // notifying the main thread which is sleeping
 }
 
@@ -124,6 +243,11 @@ void Crawler::createThread()
 
 void Crawler::runCrawler()
 {
+
+	cout << "Initializing runCrawler()..." << endl;
+	cout << adjList.value().size() << endl;
+	cout << discoveredSites.value().size() << endl;
+	cout << linkQueue.size() << endl;
 	while (true)
 	{
 		if (maxPagesReached.value())
@@ -166,7 +290,8 @@ void Crawler::runCrawler()
 		// End of crawler loop
 	}
 
-	log << "Crawling completed." << endl << endl;
+	log << "Crawling completed." << endl
+			<< endl;
 }
 
 /*
@@ -205,16 +330,15 @@ void Crawler::showResults()
 		}
 	}
 
-
 	vector<pair<string, int>> v(m.begin(), m.end());
 	sort(v.begin(), v.end(), [](auto a, auto b) { return a.second > b.second; });
 	int xx = 0;
 	for (auto i : v)
 	{
 		cout << "|   " << ++xx << ". "
-			 << i.first << ": "
-			 << string(57 - i.first.length() - int(log10(xx) + 1), ' ')
-			 << i.second << "   |" << endl;
+				 << i.first << ": "
+				 << string(57 - i.first.length() - int(log10(xx) + 1), ' ')
+				 << i.second << "   |" << endl;
 	}
 
 	cout << dashline << endl;
@@ -222,7 +346,6 @@ void Crawler::showResults()
 
 void childThread(string url, int th_no)
 {
-
 	clock_t t1, t2;
 	double d_Time, p_Time, u_Time;
 
@@ -231,28 +354,26 @@ void childThread(string url, int th_no)
 	string html = myCrawler.downloader(url); // downloading html
 	t2 = clock();
 	d_Time = double(t2 - t1) * 1000 / CLOCKS_PER_SEC;
-
-	cout << CYAN << "Thread " << th_no << " has downloaded files." << RESET << endl;
-
 	// for calculating time of downloading
+	cout << CYAN << "Thread " << th_no << " has downloaded files." << RESET << endl;
 
 	t1 = clock();
 	set<string> linkedSites = getLinks(html, myCrawler.maxLinks); // parsing html
 	t2 = clock();
 	p_Time = double(t2 - t1) * 1000 / CLOCKS_PER_SEC;
+	// updating the shared variables
 	cout << CYAN << "Thread " << th_no << " has extracted links." << RESET << endl;
 
-	// updating the shared variables
 	t1 = clock();
-	string currDomain = getDomain(url);
 	for (auto i : linkedSites)
 	{
 		if (!myCrawler.discoveredSites.get(i))
 		{
+			cout << "Updated@@@" << endl;
 			myCrawler.linkQueue.push(i);
 			myCrawler.discoveredSites.inc(i);
 
-			myCrawler.adjList.add(currDomain, i);
+			myCrawler.adjList.add(url, i);
 		}
 	}
 	t2 = clock();
