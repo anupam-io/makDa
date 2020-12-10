@@ -119,6 +119,3 @@ while(1){
 |   11. en.wikiversity.org:                                      1   |
 |   12. en.wikivoyage.org:                                       1   |
 ----------------------------------------------------------------------</pre></code>
-
-## Contributors
-- [Anupam Kumar](https://github.com/akcgjc007)
