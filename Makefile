@@ -2,7 +2,7 @@ CC 				:= g++
 CC_FLAGS 	:= -w -Wall -Werror -Wextra -lcurl -lpthread -O3
 CC_V 			:= -std=c++14
 
-BUILD := _beqa
+BUILD := makda_build
 
 maxlinks		:= 100
 pagelimit		:= 5
@@ -23,7 +23,7 @@ compile:
 
 
 run:
-	mkdir temp -p
+	mkdir -p temp
 	@echo "Running..."
 	./$(BUILD) \
 		$(maxlinks) $(pagelimit) $(threads) \
